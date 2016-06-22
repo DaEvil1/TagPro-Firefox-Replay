@@ -1,5 +1,5 @@
 // ==UserScript==
-// @authro        DaEvil1
+// @author        DaEvil1
 // @name          Basic Recording For FireFox
 // @namespace     http://www.reddit.com/user/DaEvil1
 
