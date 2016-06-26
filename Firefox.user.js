@@ -1,3 +1,4 @@
+
 // ==UserScript==
 // @author        DaEvil1
 // @name          Basic Recording For FireFox
@@ -12,6 +13,17 @@
 // @version       0.1
 // ==/UserScript==
 
+//frames per second. Default is 60
+fps = 60;
+
+//seconds that are saved. Default is 40
+saveDuration = 40;
+
+//keycode. default is \
+replayKey = 220
+
+
+
 
 function createZeroArray(N) {
     return (Array.apply(null, {length: N}).map(Number.call, function () {
@@ -22,8 +34,8 @@ function createZeroArray(N) {
 
 function recordReplayData() {
     var savingIndex = 0;
-    var fps = 60;
-    var saveDuration = 40;
+//    var fps = 60;
+//    var saveDuration = 40;
 
     // set up map data
     positions.chat = [];
@@ -507,21 +519,17 @@ function recordButtonF() {
 }
 
 function exportReplays(){
+    var a = document.createElement('a');
+    document.body.appendChild(a);
     for (var i = 0; i < replayFiles.length; i++){
         var fileContent = replayFiles[i];        
         var file = new Blob([fileContent], {type: "data:application/json;charset=utf-8"});
-        var a = document.createElement('a');
         a.download = 'tagpro-'+Date.now()+'.txt';
         a.href = (window.URL || window.webkitURL).createObjectURL(file);
-        
-        
-        document.body.appendChild(a);
+
         a.click();
-        
-        
-        document.removeChild(a);
-        
 }
+    document.removeChild(a);
     replayFiles = []
 }
 
@@ -536,13 +544,24 @@ function saveReplayF(){
 
 
 //function postGameReplay(){
-//    window.addEventListener('beforeunload',function(){
+//    window.addListener('beforeunload',function(){
 //        exportReplays();
 //        window.alert("sometext");
 //    });
 //}
 
 
+function keypress(){
+    document.body.addEventListener('keydown', function(e) {
+        if ( e.keyCode === replayKey ) // \
+        {
+            saveReplayData(positions);
+            fadeConfirmation();
+            if (gameOver){
+                exportReplays();
+            }
+        }});
+}
 
 if (location.port != ''){
     main();
@@ -558,15 +577,16 @@ function main(){
                 gameOver =false;
                 replayFiles = [];
                 clearInterval(startInterval);
-                positions = {};
+                positions = {}
                 recordButtonF();
+                keypress();
                 recordReplayData();
                 saveReplayF();
                 postGameReplay();
-
-            }
+                    }
         }, 1000);
     });
 }
+
 
 
